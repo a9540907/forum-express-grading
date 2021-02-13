@@ -1,6 +1,7 @@
 <h1>餐廳後台</h1>
-<a href='/admin/restaurants'>Restaurants</a> |
-<a href='/admin/categories'>Categories</a>
+<a href="/admin/restaurants">Restaurants</a> |
+<a href='/admin/categories'>Categories</a> |
+<a href="/admin/users">Users</a>
 <br />
 <br />
 
@@ -8,13 +9,13 @@
   {{#if category}}
   <form action="/admin/categories/{{category.id}}?_method=PUT" method="POST">
     <input type="text" placeholder="name" name="name" value="{{category.name}}">
-    <button type="submit">Update</button>
+    <button type="submit" class="btn btn-primary">Update</button>
     <a href="/admin/categories">or Create New</a>
   </form>
   {{else}}
   <form action="/admin/categories" method="POST">
     <input type="text" placeholder="name" name="name">
-    <button type="submit">Submit</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
   {{/if}}
 </div>

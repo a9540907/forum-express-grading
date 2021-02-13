@@ -1,0 +1,18 @@
+<div class="container ">
+  <div class="row d-flex justify-content-center" style="">
+    <div class="col-md-3">
+      <img class="userImage" src="
+      {{#if profile.image}} {{profile.image}} {{else}} https://i.imgur.com/Ynh5eLJ.jpg
+        {{/if}}" alt="" style="width:200px; border-radius: 90%;">
+    </div>
+    <div class="col-md-9 userData">
+      <h4 style="font-weight:bold;">{{profile.name}}</h4>
+      <h6>{{profile.email}}</h6>
+      <a class="btn btn-primary" href="/users/{{profile.id}}/edit">edit</a>
+    </div>
+  </div>
+
+  <br />
+
+  <a href="javascript:history.back()">回上一頁</a>
+</div>
