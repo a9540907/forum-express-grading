@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
-const fs = require('fs')
+const Comment = db.Comment
+const Restaurant = db.Restaurant
 const imgur = require('imgur')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
@@ -51,17 +52,24 @@ const userController = {
   },
 
   getUser: (req, res) => {
-    // return User.findOne({ where: { id: req.params.id } }).then(user => {
-    //   return res.render('profile', { profile: user.toJSON() })
-    // })
     const id = req.params.id
-    return User.findByPk(id).then(user => res.render('profile', { profile: user.toJSON() }))
+    return User.findByPk(id).then(user => {
+      Comment.findAll(({
+        include: Restaurant,
+        where: { UserId: req.params.id },
+        raw: true,
+        nest: true
+      })).then(test => {
+        const commentAmount = test.length
+        const commentRestarant = []
+        test.forEach((element, index) => commentRestarant.push(element.Restaurant))
+        res.render('profile', { profile: user.toJSON(), commentAmount, commentRestarant })
+
+      })
+    })
   },
 
   editUser: (req, res) => {
-    // return User.findOne({ where: { id: req.params.id } }).then(user => {
-    //   return res.render('editprofile', { profile: user.toJSON() })
-    // })
     const id = req.params.id
     return User.findByPk(id).then(user => res.render('editProfile', { profile: user.toJSON() }))
   },

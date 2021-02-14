@@ -8,11 +8,30 @@
     <div class="col-md-9 userData">
       <h4 style="font-weight:bold;">{{profile.name}}</h4>
       <h6>{{profile.email}}</h6>
+      <h6>{{commentAmount}} 已評論餐廳</h6>
+      <br />
+      <br />
       <a class="btn btn-primary" href="/users/{{profile.id}}/edit">edit</a>
     </div>
   </div>
 
   <br />
 
+  <div class="card">
+    <div class="card-header">
+      {{commentAmount}} 已評論餐廳
+    </div>
+    <div class="card-body">
+      <a class="card-text">
+        {{#each commentRestarant}}
+        <a href="/restaurants/{{this.id}}">
+          <img class="img-comment my-1" src="{{this.image}}" alt="" style="height: 150px; width:200px;">
+        </a>
+        {{/each}}
+      </a>
+    </div>
+  </div>
+
+  <br />
   <a href="javascript:history.back()">回上一頁</a>
 </div>
