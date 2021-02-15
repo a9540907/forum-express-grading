@@ -92,7 +92,28 @@ const restController = {
         comments: comments
       })
     })
-  }
+  },
+
+  getDashboard: (req, res) => {
+    return Promise.all([
+      Restaurant.findByPk(req.params.id, {
+        raw: true,
+        nest: true,
+        include: [Category]
+      }),
+      Comment.findAll({
+        raw: true,
+        nest: true,
+        where: { RestaurantId: req.params.id }
+      })
+    ]).then(([restaunant, comments]) => {
+
+      return res.render('dashboard', {
+        restaurant: restaunant,
+        comments: comments.length
+      })
+    })
+  },
 }
 
 module.exports = restController
