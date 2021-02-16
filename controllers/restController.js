@@ -64,11 +64,59 @@ const restController = {
       ]
     }).then(restaurant => {
       // console.log(restaurant.Comments[0].dataValues)
+      // console.log('restaurant', restaurant.toJSON())
+      restaurant.viewCounts = restaurant.viewCounts + 1
+      restaurant.save()
       return res.render('restaurant', {
         restaurant: restaurant.toJSON()
       })
     })
-  }
+  },
+
+  getFeeds: (req, res) => {
+    return Promise.all([
+      Restaurant.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [Category]
+      }),
+      Comment.findAll({
+        limit: 10,
+        raw: true,
+        nest: true,
+        order: [['createdAt', 'DESC']],
+        include: [User, Restaurant]
+      })
+    ]).then(([restaurants, comments]) => {
+      return res.render('feeds', {
+        restaurants: restaurants,
+        comments: comments
+      })
+    })
+  },
+
+  getDashboard: (req, res) => {
+    return Promise.all([
+      Restaurant.findByPk(req.params.id, {
+        raw: true,
+        nest: true,
+        include: [Category]
+      }),
+      Comment.findAll({
+        raw: true,
+        nest: true,
+        where: { RestaurantId: req.params.id }
+      })
+    ]).then(([restaunant, comments]) => {
+
+      return res.render('dashboard', {
+        restaurant: restaunant,
+        comments: comments.length
+      })
+    })
+  },
 }
 
 module.exports = restController
