@@ -64,6 +64,9 @@ const restController = {
       ]
     }).then(restaurant => {
       // console.log(restaurant.Comments[0].dataValues)
+      // console.log('restaurant', restaurant.toJSON())
+      restaurant.viewCounts = restaurant.viewCounts + 1
+      restaurant.save()
       return res.render('restaurant', {
         restaurant: restaurant.toJSON()
       })
