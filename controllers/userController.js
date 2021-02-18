@@ -7,6 +7,7 @@ const Favorite = db.Favorite
 const Like = db.Like
 const imgur = require('imgur')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
+const helper = require('../_helpers')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -117,7 +118,7 @@ const userController = {
 
   addFavorite: (req, res) => {
     return Favorite.create({
-      UserId: req.user.id,
+      UserId: helper.getUser(req).id,
       RestaurantId: req.params.restaurantId
     })
       .then((restaurant) => {
@@ -128,7 +129,7 @@ const userController = {
   removeFavorite: (req, res) => {
     return Favorite.findOne({
       where: {
-        UserId: req.user.id,
+        UserId: helper.getUser(req).id,
         RestaurantId: req.params.restaurantId
       }
     })
@@ -142,7 +143,7 @@ const userController = {
 
   addLike: (req, res) => {
     return Like.create({
-      UserId: req.user.id,
+      UserId: helper.getUser(req).id,
       RestaurantId: req.params.restaurantId
     })
       .then((restaurant) => {
@@ -153,7 +154,7 @@ const userController = {
   removeLike: (req, res) => {
     return Like.findOne({
       where: {
-        UserId: req.user.id,
+        UserId: helper.getUser(req).id,
         RestaurantId: req.params.restaurantId
       }
     })
