@@ -38,8 +38,8 @@ const restController = {
         ...r.dataValues,
         description: r.dataValues.description.substring(0, 50),
         categoryName: r.Category.name,
-        isFavorited: req.user.FavoritedRestaurants.map(d => d.id).includes(r.id),
-        isLiked: req.user.LikedRestaurants.map(d => d.id).includes(r.id)
+        isFavorited: helper.getUser(req).FavoritedRestaurants.map(d => d.id).includes(r.id),
+        isLiked: helper.getUser(req).LikedRestaurants.map(d => d.id).includes(r.id)
       }))
 
       Category.findAll({
@@ -69,7 +69,6 @@ const restController = {
         { model: Comment, include: [User] }
       ]
     }).then(restaurant => {
-      // console.log('restaurant', restaurant.toJSON())
 
       restaurant.viewCounts = restaurant.viewCounts + 1
       restaurant.save()
@@ -128,6 +127,25 @@ const restController = {
       })
     })
   },
+
+  getTopRestaurant: (req, res) => {
+    return Restaurant.findAll({
+      include: [{ model: User, as: 'FavoritedUsers' }]
+    }).then(restaurants => {
+
+      restaurants = restaurants.map(r => ({
+        ...r.dataValues,
+        description: r.dataValues.description.substring(0, 50),
+        isFavorited: helper.getUser(req).FavoritedRestaurants.map(d => d.id).includes(r.id),
+        FollowerCount: r.FavoritedUsers.length
+      }))
+
+      restaurants = restaurants.sort((a, b) => b.FollowerCount - a.FollowerCount)
+      restaurants = restaurants.slice(0, 10)
+      return res.render('topRestaurant', { restaurants })
+    })
+
+  }
 }
 
 module.exports = restController
