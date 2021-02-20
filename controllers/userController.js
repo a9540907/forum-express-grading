@@ -57,17 +57,32 @@ const userController = {
 
   getUser: (req, res) => {
     const id = req.params.id
-    return User.findByPk(id).then(user => {
+    User.findByPk(id, {
+      include: [
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
+        { model: Restaurant, as: 'FavoritedRestaurants' }
+      ]
+    }).then(user => {
+
       Comment.findAll(({
         include: Restaurant,
         where: { UserId: req.params.id },
         raw: true,
         nest: true
-      })).then(test => {
-        const commentAmount = test.length
+      })).then(data => {
+
+        const commentAmount = data.length
         const commentRestarant = []
-        test.forEach((element, index) => commentRestarant.push(element.Restaurant))
-        res.render('profile', { profile: user.toJSON(), commentAmount, commentRestarant })
+        data.forEach((element, index) => commentRestarant.push(element.Restaurant))
+
+        const isCurrentUser = id == helper.getUser(req).id
+        // const isFollowed = helper.getUser(req).Followings.map(d => d.id).includes(req.params.id)
+        const isFollowed = helper.getUser(req).Followings.some(d => d.id === Number(id))
+
+
+
+        return res.render('profile', { profile: user.toJSON(), commentAmount, commentRestarant, isCurrentUser, isFollowed })
 
       })
     })
@@ -80,7 +95,7 @@ const userController = {
 
 
   putUser: (req, res) => {
-    console.log('req.body:', req.body)
+
     if (!req.body.name) {
       req.flash('error_messages', 'name didn\'t exist')
       return res.redirect('back')
@@ -178,11 +193,11 @@ const userController = {
         ...user.dataValues,
 
         FollowerCount: user.Followers.length,
-
         isFollowed: req.user.Followings.map(d => d.id).includes(user.id)
       }))
 
       users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
+
       return res.render('topUser', { users: users })
     })
   },

@@ -118,7 +118,7 @@ const restController = {
         raw: true,
         nest: true,
         where: { RestaurantId: req.params.id }
-      })
+      }),
     ]).then(([restaunant, comments]) => {
 
       return res.render('dashboard', {
